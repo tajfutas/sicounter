@@ -14,7 +14,6 @@ def add_counters(counter, control, siid, assert_vals=None):
   for (i, (d, v)) in enumerate((
       (counters[(counter, -2, -1)], siid),
       (counters[(counter, control, -1)], siid),
-      (counters[(counter, -1, siid)], control),
     )):
     if not d.get(v):
       val = len(d) + 1
@@ -33,10 +32,8 @@ def print_any(s):
 def print_counters(counter, control, siid):
   c_siid_at_any = counters[(counter, -2, -1)][siid]
   c_siid_at_control = counters[(counter, control, -1)][siid]
-  c_control_at_siid = counters[(counter, -1, siid)][control]
-  s = (f'{nowstr()}    [ {counter} ] {c_siid_at_any}    '
-      + f'[ {siid} ===> {control} ] '
-      + f'{c_siid_at_control}/{c_control_at_siid}')
+  s = (f'{nowstr()}   [ {counter} : {siid} ===> {control} ]   '
+      + f'{c_siid_at_any} ({c_siid_at_control})')
   print_any(s)
 
 
@@ -55,8 +52,9 @@ def get_siid(siid_data):
 
 
 def init_sets():
-  re_s = ('^[\d:\.]+?\s+\[\s*(\w+?)\s*\]\s+(\d+)\s+'
-    + '\[\s*(\d+)\s*=+>\s*(\d+)\s*\]\s+(\d+)/(\d+)$')
+  re_s = ('^[\d:\.]+?\s+'
+      '\[\s*(\w+?)\s+:\s+(\d+)\s*=+>\s*(\d+)\s*\]\s+'
+      '(\d+)\s+\((\d+)\)$')
   re_pat_log = re.compile(re_s)
   if LOG_FILE and os.path.exists(LOG_FILE):
     with open(LOG_FILE, 'r', encoding='utf8') as f:
@@ -65,13 +63,12 @@ def init_sets():
       print(row[:-1])
       m = re_pat_log.match(row[:-1])
       if m:
-        counter, c0, siid, control, c1, c2 = m.groups()
+        counter, siid, control, c0, c1 = m.groups()
         siid, control = int(siid), int(control)
         c_siid_at_any = c0 = int(c0)
         c_siid_at_control = c1 = int(c1)
-        c_control_at_siid = c2 = int(c2)
         add_counters(counter, control, siid,
-            assert_vals=(c0, c1, c2))
+            assert_vals=(c0, c1))
 
 
 class Protocol(asyncio.Protocol):
@@ -162,7 +159,7 @@ class Protocol(asyncio.Protocol):
   def on_else(self):
     cmd_code = self.buf[1]
     bodylen = self.buf[2]
-    print_any(f'{nowstr()} ** {cmd_code:0>2X} {bodylen:0>2X}')
+    print_any(f'{nowstr()} * {cmd_code:0>2X} {bodylen:0>2X}')
 
   def on_ignored(self):
     pass
@@ -216,7 +213,7 @@ def main():
 
   import sys
 
-  print('SICOUNTER v0.11 by Szieberth Adam')
+  print('SICOUNTER v0.1.2 by Szieberth Adam')
 
   LOG_FILE = 'sicounter.log'
   re_pat = re.compile(
