@@ -1,17 +1,48 @@
 import asyncio
+import collections
 import datetime
 import os
 import re
 import struct
 
-inserted = set()
-readed_out = set()
-transmitted = set()
+counters = collections.defaultdict(dict)
+
 LOG_FILE = 'sicounter.log'
+
+
+def add_counters(counter, control, siid, assert_vals=None):
+  for (i, (d, v)) in enumerate((
+      (counters[(counter, -2, -1)], siid),
+      (counters[(counter, control, -1)], siid),
+      (counters[(counter, -1, siid)], control),
+    )):
+    if not d.get(v):
+      val = len(d) + 1
+      if assert_vals:
+        assert val == assert_vals[i]
+      d[v] = val
+
+
+def print_any(s):
+  print(s)
+  if LOG_FILE:
+    with open(LOG_FILE, 'a', encoding='utf8') as f:
+      f.write(s + '\n')
+
+
+def print_counters(counter, control, siid):
+  c_siid_at_any = counters[(counter, -2, -1)][siid]
+  c_siid_at_control = counters[(counter, control, -1)][siid]
+  c_control_at_siid = counters[(counter, -1, siid)][control]
+  s = (f'{nowstr()}    [ {counter} ] {c_siid_at_any}    '
+      + f'[ {siid} ===> {control} ] '
+      + f'{c_siid_at_control}/{c_control_at_siid}')
+  print_any(s)
+
 
 def nowstr():
   N = datetime.datetime.now()
-  return f'{N:%H:%M:%S}.' + f'{round(N.microsecond/10000):0>2}'
+  return f'{N:%H:%M:%S}.' + f'{N.microsecond//10000:0>2}'
 
 
 def get_siid(siid_data):
@@ -24,18 +55,23 @@ def get_siid(siid_data):
 
 
 def init_sets():
-  re_pat_log_s = '^[\d:\.]+?\s+(\w\w)-(\d+)\s+\((\d+)\)$'
-  re_pat_log = re.compile(re_pat_log_s)
-  events = {'IN': inserted, 'RO': readed_out, 'TR': transmitted}
+  re_s = ('^[\d:\.]+?\s+\[\s*(\w+?)\s*\]\s+(\d+)\s+'
+    + '\[\s*(\d+)\s*=+>\s*(\d+)\s*\]\s+(\d+)/(\d+)$')
+  re_pat_log = re.compile(re_s)
   if LOG_FILE and os.path.exists(LOG_FILE):
     with open(LOG_FILE, 'r', encoding='utf8') as f:
       log_entries = f.readlines()
-  for row in log_entries:
-    print(row[:-1])
-    m = re_pat_log.match(row[:-1])
-    if m:
-      ev, nr, siid = m.groups()
-      events[ev].add(int(siid))
+    for row in log_entries:
+      print(row[:-1])
+      m = re_pat_log.match(row[:-1])
+      if m:
+        counter, c0, siid, control, c1, c2 = m.groups()
+        siid, control = int(siid), int(control)
+        c_siid_at_any = c0 = int(c0)
+        c_siid_at_control = c1 = int(c1)
+        c_control_at_siid = c2 = int(c2)
+        add_counters(counter, control, siid,
+            assert_vals=(c0, c1, c2))
 
 
 class Protocol(asyncio.Protocol):
@@ -51,6 +87,7 @@ class Protocol(asyncio.Protocol):
       b'\xEA': 'on_ignored',
       b'\xEF': 'on_read_out_si8',
     }
+
   STATES = 'stx', 'cmd', 'len', 'body', 'crc', 'etx'
 
   def reset(self):
@@ -61,15 +98,14 @@ class Protocol(asyncio.Protocol):
     self.reset()
     self.tr = transport
 
+
   def data_received(self, data):
-    #print(data)
     self.buf.extend(data)
     self.data_received_on_state()
 
   def data_received_on_state(self):
     state = self.STATES[self.state]
     methodname = f'data_received_on_{state}'
-    #print(methodname, self.buf)
     getattr(self, methodname)()
 
   def data_received_on_stx(self):
@@ -118,69 +154,61 @@ class Protocol(asyncio.Protocol):
     if cmd:
       getattr(self, cmd)()
     else:
-      self.print(f'{nowstr()} * {cmd_code:0>2X} {bodylen:0>2X}')
-      #    for x in command_bytes))
-      #command_bytes = self.buf[:6 + bodylen]
-      #print(f'{nowstr()} * ' + ' '.join(f'{x:0>2X}'
-      #    for x in command_bytes))
+      self.on_else()
     self.state = 0
     self.buf = self.buf[6 + bodylen:]
     self.data_received_on_state()
+
+  def on_else(self):
+    cmd_code = self.buf[1]
+    bodylen = self.buf[2]
+    print_any(f'{nowstr()} ** {cmd_code:0>2X} {bodylen:0>2X}')
 
   def on_ignored(self):
     pass
 
   def on_inserted(self):
+    control = struct.unpack('>H', self.buf[3:5])[0]
     siid_data = self.buf[5:9]
     siid = get_siid(siid_data)
-    if siid in inserted:
-      return
-    inserted.add(siid)
-    self.print(f'{nowstr()} IN-{len(inserted)} ({siid})')
+    add_counters('IN', control, siid)
+    print_counters('IN', control, siid)
 
-  def on_read_out(self, siid_data):
+  def on_read_out(self, siid_data, control):
     siid = get_siid(siid_data)
-    if siid in readed_out:
-      return
-    readed_out.add(siid)
-    self.print(f'{nowstr()} RO-{len(readed_out)} ({siid})')
+    add_counters('RO', control, siid)
+    print_counters('RO', control, siid)
 
   def on_read_out_si5(self):
+    control = struct.unpack('>H', self.buf[3:5])[0]
     chip_data = self.buf[5:133]
     cns = chip_data[0x06:0x07]
     sn1sn0 = chip_data[0x11:0x13]
     siid_data = b'\x00' + cns + sn1sn0
-    self.on_read_out(siid_data)
+    self.on_read_out(siid_data, control)
 
   def on_read_out_si6(self):
+    control = struct.unpack('>H', self.buf[3:5])[0]
     bn = self.buf[5]
     if bn == 0:
       chip_data = self.buf[6:134]
       siid_data = chip_data[0x1A:0x1E]
-      self.on_read_out(siid_data)
+      self.on_read_out(siid_data, control)
 
   def on_read_out_si8(self):
+    control = struct.unpack('>H', self.buf[3:5])[0]
     bn = self.buf[5]
     if bn == 0:
       chip_data = self.buf[6:134]
       siid_data = chip_data[0x18:0x1C]
-      self.on_read_out(siid_data)
+      self.on_read_out(siid_data, control)
 
   def on_transmit_record(self):
+    control = struct.unpack('>H', self.buf[3:5])[0]
     siid_data = self.buf[5:9]
     siid = get_siid(siid_data)
-    if siid in transmitted:
-      return
-    transmitted.add(siid)
-    self.print(f'{nowstr()} TR-{len(transmitted)} ({siid})')
-
-  def print(self, s):
-    print(s)
-    if LOG_FILE:
-      with open(LOG_FILE, 'a', encoding='utf8') as f:
-        f.write(s + '\n')
-
-
+    add_counters('TR', control, siid)
+    print_counters('TR', control, siid)
 
 
 def main():
@@ -188,7 +216,7 @@ def main():
 
   import sys
 
-  print('SICOUNTER v0.1 by Szieberth Adam')
+  print('SICOUNTER v0.11 by Szieberth Adam')
 
   LOG_FILE = 'sicounter.log'
   re_pat = re.compile(
