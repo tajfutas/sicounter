@@ -5,6 +5,7 @@ subtitle: SportIdent lyukasztás és kiolvasás számláló
 ---
 
 verziószám: 0.1.2
+_[LETÖLTÉS]_
 
 
 Bevezetés
@@ -62,11 +63,13 @@ Telepítés és használat
    Remélhetőleg a telepítő fel fogja ajánlani, hogy a `python.exe` fájl elérési útját hozzáadja a `$PATH` környezeti változóhoz, így nem kell a teljes elérési utat megadni indításkor.
    Éljen ezzel a lehetőséggel!
 
-2. Telepítse és indítsa a [SICOMTRACE]-et minden egyes dobozra, amelyen számlálást kíván végezni.
+2. Telepítse és indítsa a [SICOMTRACE]-et minden egyes dobozra, amelyen számlálást kíván végezni!
    Amennyiben a dobozok azonos számítógéphez kapcsolódnak, akkor a TCP/IP szervereket más-más portokra kell állítani.
    A SICOUNTER ezekhez fog kapcsolódni.
 
-3. Nyisson egy Parancssort (Start gomb > Keresés `cmd`-re).
+3. [Töltse le][LETÖLTÉS] és csomagolja ki a SICOUNTER-t egy könyvtárba!
+
+4. Nyisson egy Parancssort (Start gomb > Keresés `cmd`-re)!
    Lépjen be a könyvtárba ahova `SICOUNTER.LOG` fájlt szeretné.
    Innen indítsa a SICOUNTER szkriptet a Python segítségével.
    A program ettől kezdve számlálja a lyukasztásokat, a kiolvasási behelyezéseket és a kiolvasásokat.
@@ -102,4 +105,5 @@ Minden engedély megadva.
 Ez a munka szabadon felhasználható mindennemű célból nem kizárólagosan ideértve a használatot, másolást, módosítást, közlést, terjesztést, újraengedélyezést, és az eredeti vagy a derivatív példányok üzleti célú értékesítését.
 
 
+[LETÖLTÉS]: https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip
 [SICOMTRACE]: http://tajfutas.github.io/sicomtrace
