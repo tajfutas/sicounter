@@ -4,7 +4,7 @@ title: SICOUNTER
 subtitle: SportIdent lyukasztás és kiolvasás számláló
 ---
 
-verziószám: 0.1.2
+verziószám: 0.1.2  
 _[LETÖLTÉS]_
 
 
