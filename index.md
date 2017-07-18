@@ -5,6 +5,8 @@ subtitle: SportIdent Punch and Read Out Counter
 ---
 
 version 0.1.2  
+_[DOWNLOAD]_
+
 
 
 Introduction
@@ -64,6 +66,8 @@ Telepítés és használat
    In case of multiple stations connected to a single computer, different port numbers are required for the TCP/IP servers.
    SICOUNTER will connect to those servers.
 
+3. [Download][DOWNLOAD] and unpack SICOUNTER to a directory you prefer.
+
 3. Open a Command Prompt (Start button > Search for `cmd`).
    Go to the directory where you want to store the `SICOUNTER.LOG`file.
    From this location, start SICOUNTER with Python.
@@ -101,5 +105,5 @@ All permissions are granted.
 This work is free for any kind of usage, including but not limited to copy, modify, publish, distribute, sublicense, and to sell original or derivative copies of it.
 
 
-
+[DOWNLOAD]: https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip
 [SICOMTRACE]: https://foot-o.github.io/sicomtrace
