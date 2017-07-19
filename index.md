@@ -2,10 +2,10 @@
 layout: page
 title: SICOUNTER
 subtitle: SportIdent Punch and Read Out Counter
+version: 0.1.2
+repo: "https://github.com/tajfutas/sicounter"
+download: "https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip"
 ---
-
-version 0.1.2  
-_[DOWNLOAD]_
 
 
 Introduction
@@ -104,5 +104,5 @@ All permissions are granted.
 This work is free for any kind of usage, including but not limited to copy, modify, publish, distribute, sublicense, and to sell original or derivative copies of it.
 
 
-[DOWNLOAD]: https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip
+[DOWNLOAD]: {{ page.download }}
 [SICOMTRACE]: https://foot-o.github.io/sicomtrace
