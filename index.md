@@ -97,7 +97,7 @@ Telepítés és használat
 Licence
 -------
 
-_Copyright © 2016–2017, Szieberth Ádám_
+_Copyright © 2017, Szieberth Ádám_
 
 All permissions are granted.
 
