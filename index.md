@@ -11,7 +11,7 @@ _[LETÖLTÉS]_
 Bevezetés
 ---------
 
-The `sicounter.py` _Python 3_ szkript segítségével számlálhatja az egy vagy több SportIdent dobozba történt lyukasztásokat vagy kiolvasásokat.
+A `sicounter.py` _Python 3_ szkript segítségével számlálhatja az egy vagy több SportIdent dobozba történt lyukasztásokat vagy kiolvasásokat.
 
 Eredetileg a [2017-es Hungária Kupára](http://adatbank.mtfsz.hu/esemeny/show/esemeny_id/6363) készült azzal a céllal, hogy számolja a célba érkezőket, akik közül minden századik valamilyen ajándékban részesült.
 A feladatot bonyolította, hogy több doboz fogadja a beérkezőket és ezeket együttesen kell figyelni, ráadásul nem lehetett előre tudni, hogy lesz-e lehetőség a céldobozok bekötésére, mert ha nem, akkor jobb híjján a kiolvasásokat kell számlálni.
