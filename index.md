@@ -2,10 +2,10 @@
 layout: page
 title: SICOUNTER
 subtitle: SportIdent lyukasztás és kiolvasás számláló
+version: 0.1.2
+repo: "https://github.com/tajfutas/sicounter"
+download: "https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip"
 ---
-
-verziószám: 0.1.2  
-_[LETÖLTÉS]_
 
 
 Bevezetés
@@ -105,5 +105,5 @@ Minden engedély megadva.
 Ez a munka szabadon felhasználható mindennemű célból nem kizárólagosan ideértve a használatot, másolást, módosítást, közlést, terjesztést, újraengedélyezést, és az eredeti vagy a derivatív példányok üzleti célú értékesítését.
 
 
-[LETÖLTÉS]: https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip
+[LETÖLTÉS]: {{ page.download }}
 [SICOMTRACE]: http://tajfutas.github.io/sicomtrace
