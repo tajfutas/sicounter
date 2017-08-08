@@ -2,9 +2,9 @@
 layout: page
 title: SICOUNTER
 subtitle: SportIdent lyukasztás és kiolvasás számláló
-version: 0.1.2
+version: 0.1.3
 repo: "https://github.com/tajfutas/sicounter"
-download: "https://github.com/tajfutas/sicounter/releases/download/v0.1.2/sicounter.zip"
+download: "https://github.com/tajfutas/sicounter/releases/download/v0.1.3/sicounter.zip"
 ---
 
 
