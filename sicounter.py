@@ -213,7 +213,7 @@ def main():
 
   import sys
 
-  print('SICOUNTER v0.1.2 by Szieberth Adam')
+  print('SICOUNTER v0.1.3 by Szieberth Adam')
 
   LOG_FILE = 'sicounter.log'
   re_pat = re.compile(
@@ -224,13 +224,13 @@ def main():
   if len(sys.argv) < 2:
     print('Usage: python sicounter.py '
         '<TCP_HOST_1> [TCP_HOST_2 ...]')
-    print('"D" as host is a shortcut to default localhost '
-        '(127.0.0.1:7487)')
     sys.exit(1)
   for a in sys.argv[1:]:
-    if a.lower() == 'default'[:min(len(a), 7)]:
-      a = '127.0.0.1:7487'
-    m = re_pat.match(a)
+    if a.isdecimal():
+      a_ = f'127.0.0.1:{a}'
+    else:
+      a_ = a
+    m = re_pat.match(a_)
     if not m:
       print(f'Invalid address: {a}')
       print('Valid address formats: XXX.XXX.XXX.XXX; '
