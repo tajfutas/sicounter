@@ -13,7 +13,7 @@ Introduction
 
 With the `sicounter.py` _Python 3_ script you can count the punches or read outs of one or more SportIdent stations.
 
-Originally it was developed for the [Hungary Cup 2017](http://adatbank.mtfsz.hu/esemeny/show/esemeny_id/6363) with the desire to count the finished runners and be able to give gifts to each one hundredth of them.
+Originally it was developed for the [Hungary Cup 2017](http://adatbank.mtfsz.en/esemeny/show/esemeny_id/6363) with the desire to count the finished runners and be able to give gifts to each one hundredth of them.
 The task got complicated by the fact that there were multiple finish and read out stations and in advance it was uncertain whether the finish stations would be wired into the computer network, so to have a plan B, the support of read out stations had to get developed as well.
 Moreover, there are two kinds of read out mechanism: handshake ahd auto send.
 
@@ -22,6 +22,7 @@ To support all the above scenarios, SICOUNTER has three distinct counters:
 * _TR_:
   This counts the punches of auto send control staions (Clear, Check, Start, Control, Finish).
   The types of the stations are ignored by this counter which result no distinction between the punches on different station types.
+  If you want separate the counters by station types or by other aspect then you have to start multiple SICOUNTER instances.
 
 * _IN_:
   This counts the inserts into Read Out stations.
@@ -35,6 +36,8 @@ To support all the above scenarios, SICOUNTER has three distinct counters:
   The second and subsequent data blocks are irrelevant as the first one contains the chip number which is the only one the counter needs.
   Note that in handshake mode this data has to get asked explicitly by the organizer software, as it will not get sended automatically.
   As the block sizes are 128 bytes, this data arrives slower than those for the _IN_ counter.
+
+  _ATTENTION! This mod is buggy. Fix comes with version 0.1.4._
 
 As a matter of fact, the SICOUNTER deals ordinal numbers to the SportIdent chips.
 The given numbers are fixed and will not change due to subsequent punches or read outs.
@@ -53,13 +56,15 @@ SICOUNTER also indicates the incoming data of other type which is unnecessary fo
 It is important to know that SICOUNTER never writes to the stations, it only passively reads the sended data.
 
 
-Telepítés és használat
+Installation and Usage
 ----------------------
 
 1. Download and install the newest [_Python 3_ version](https://www.python.org/downloads/)!
    Hopefully the installer will offer you to add `python.exe` to the `$PATH` environment variable of the operating system.
    This one spares you the typing of full path of the Python executable into the command prompt when you want to start SICOUNTER.
    I advise you to pick that option.
+
+   ![Add Python to `$PATH`](https://raw.githubusercontent.com/tajfutas/sicounter/gh-pages-shared/screenshots/pyinstal.png)
 
 2. Install and start [SICOMTRACE] for each SportIdent stations you want to monitor.
    In case of multiple stations connected to a single computer, different port numbers are required for the TCP/IP servers.
