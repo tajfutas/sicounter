@@ -22,6 +22,7 @@ Ennek megfelelően három különböző számlálót alkalmaz a SICOUNTER:
 * _TR_:
   Ez számlálja az _auto send_ módba állított ellenőrződoboz (_Clear, Check, Start, Control, Finish_) által küldött lyukasztásokat.
   A doboz típusával a számláló nem foglalkozik, azaz ha több doboz lyukasztásait számlálja, és ezek a dobozok eltérő típusúak, a számláló nem különíti el ezeket.
+  Ha el kívánjuk a dobozokat különíteni típus vagy más szempont szerint, akkor több SICOUNTER-t kell indítani.
 
 * _IN_:
   Ez számlálja a kiolvasódobozba behelyezett dugókákat.
@@ -34,12 +35,13 @@ Ennek megfelelően három különböző számlálót alkalmaz a SICOUNTER:
   Ez számlálja a első kiolvasási adatblokkok érkezését a kiolvasódobozokból.
   Azért az elsőkét, mert a számláló szempontjából csak a dugóka száma lényeges, és azt pedig az első blokkok tartalmazzák.
   Megjegyzendő, hogy _handshake_ mód esetén ezt az adatot a versenylebonyolító szoftvernek kifejezetten kérnie kell, azaz nem érkezik magától. 
-  Mivel a blokkméret 128 bájt, ezért ez az adat valamiel lassabban érkezik meg, mint az _IN_ számláló esetében.
+  Mivel a blokkméret 128 bájt, ezért ez az adat valamivel lassabban érkezik meg, mint az _IN_ számláló esetében.
 
-  Kiolvasások számlálásako
   Amennyiben a kiolvasás _handshake_ módban történik, úgy érdemes előnyben részesíteni az _IN_ számlálót, ám nagyon kis esélyt látok arra, hogy bármikor más értéket mutasson a kettő: ahhoz azonos időpillanatban kell kiolvasni több versenyzőnek, és az adatokat kérő szofvernek pedig eltérő ütemben reagálni az első kiolvasó kárára.
 
-A SICOUNTER gyakorlatilag sorszámokat oszt az egyes dugókáknak.
+  _FIGYELEM! Ez a mód jelenleg bugos. Javítása a 0.1.4-es verzióban várható._
+
+A SICOUNTER gyakorlatilag sorszámokat oszt az egyes dugókáknak a figyelt eseményekre vonatkozóan.
 A kapott sorszám rögzített, és későbbi, ismételt lyukasztásokkal vagy kiolvasásokkal sem változik.
 Az első alkalom a mérvadó tehát.
 
@@ -62,6 +64,8 @@ Telepítés és használat
 1. Töltse le és telepítse a [_Python 3_ legújabb verzióját](https://www.python.org/downloads/)!
    Remélhetőleg a telepítő fel fogja ajánlani, hogy a `python.exe` fájl elérési útját hozzáadja a `$PATH` környezeti változóhoz, így nem kell a teljes elérési utat megadni indításkor.
    Éljen ezzel a lehetőséggel!
+
+   ![Python hozzáadása a `$PATH`-hoz](https://raw.githubusercontent.com/tajfutas/sicounter/gh-pages-shared/screenshots/pyinstal.png)
 
 2. Telepítse és indítsa a [SICOMTRACE]-et minden egyes dobozra, amelyen számlálást kíván végezni!
    Amennyiben a dobozok azonos számítógéphez kapcsolódnak, akkor a TCP/IP szervereket más-más portokra kell állítani.
